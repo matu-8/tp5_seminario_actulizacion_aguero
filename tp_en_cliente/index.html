@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Suma y Multiplicación de Matrices</title>
+    <style>
+        /* Estilo básico: solo grosor de bordes en tablas */
+        table {
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        td, th {
+            border: 2px solid black;
+            padding: 6px;
+            text-align: center;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            text-align: center;
+            border: 2px solid black;
+        }
+
+        hr {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Operaciones con Matrices</h1>
+
+    <!-- ===== FASE 1: Ingreso de dimensiones ===== -->
+    <h2>Fase 1 - Configuración de Matrices</h2>
+
+    <label for="cantidadMatrices">Cantidad de matrices:</label>
+    <input type="number" id="cantidadMatrices" min="2" max="2" value="2">
+    <br><br>
+
+    <div id="contenedorDimensiones"></div>
+
+    <button onclick="generarFormularioDimensiones()">Confirmar cantidad</button>
+    <br><br>
+    <button onclick="generarMatrices()">Confirmar dimensiones y mostrar matrices</button>
+
+    <hr>
+
+    <!-- ===== FASE 2: Visualización e ingreso de valores ===== -->
+    <h2>Fase 2 - Ingreso de Valores</h2>
+    <div id="contenedorMatrices"></div>
+
+    <hr>
+
+    <!-- ===== FASE 3: Operaciones ===== -->
+    <h2>Fase 3 - Operaciones</h2>
+    <button onclick="sumarMatrices()">Sumar Matrices</button>
+    <button onclick="multiplicarMatrices()">Multiplicar Matrices</button>
+
+    <h3>Resultado:</h3>
+    <div id="contenedorResultado"></div>
+
+    <!-- Archivo JS externo con toda la lógica -->
+    <script src="matrices.js"></script>
+
+</body>
+</html>
