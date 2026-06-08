@@ -4,6 +4,8 @@
 
 // Importamos express para crear el servidor
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Importamos morgan para ver los logs de las peticiones en consola
 import morgan from "morgan";
@@ -11,6 +13,8 @@ import morgan from "morgan";
 // Importamos los controladores de operaciones con matrices
 import { controladorSuma, controladorProducto } from "./controladores.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ============================================================
 // CREACIÓN DE LA APLICACIÓN
@@ -22,11 +26,7 @@ const app = express();
 // Definimos el puerto donde va a escuchar el servidor
 const PORT = 3000;
 
-
-// ============================================================
 // MIDDLEWARES
-// ============================================================
-
 // Morgan: muestra en consola cada petición que recibe el servidor
 app.use(morgan("dev"));
 
@@ -34,14 +34,12 @@ app.use(morgan("dev"));
 // de las peticiones que llegan en formato JSON
 app.use(express.json());
 
+// Servir archivos estáticos desde la carpeta public
+app.use(express.static(path.join(__dirname, "public")));
 
-// ============================================================
-// RUTAS
-// ============================================================
-
-// Ruta GET en "/" para verificar que el servidor está funcionando
+// Ruta GET en "/" para enviar la interfaz HTML
 app.get("/", function (req, res) {
-    res.send("Servidor de operaciones con matrices funcionando correctamente.");
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Ruta POST en "/suma"

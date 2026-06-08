@@ -68,75 +68,77 @@ function validarQueSeaNumero(matriz) {
 //   b) Las dos matrices deben tener las mismas dimensiones
 // ============================================================
 
-function controladorSuma(req, res) {
+async function controladorSuma(req, res) {
+    try {
+        // Leemos las dos matrices que llegaron en el cuerpo de la petición
+        const matrizA = req.body.matrizA;
+        const matrizB = req.body.matrizB;
 
-    // Leemos las dos matrices que llegaron en el cuerpo de la petición
-    const matrizA = req.body.matrizA;
-    const matrizB = req.body.matrizB;
+        // --- VALIDACIÓN: verificar que ambas matrices fueron enviadas ---
+        if (matrizA === undefined || matrizB === undefined) {
+            res.status(400).json({
+                error: "Faltan datos. Se deben enviar 'matrizA' y 'matrizB'."
+            });
+            return;
+        }
 
-    // --- VALIDACIÓN: verificar que ambas matrices fueron enviadas ---
-    if (matrizA === undefined || matrizB === undefined) {
-        res.status(400).json({
-            error: "Faltan datos. Se deben enviar 'matrizA' y 'matrizB'."
+        // --- VALIDACIÓN a): los valores deben ser solo números ---
+        const matrizATieneNumeros = validarQueSeaNumero(matrizA);
+        const matrizBTieneNumeros = validarQueSeaNumero(matrizB);
+
+        if (matrizATieneNumeros === false) {
+            res.status(400).json({
+                error: "La Matriz A contiene valores que no son números."
+            });
+            return;
+        }
+
+        if (matrizBTieneNumeros === false) {
+            res.status(400).json({
+                error: "La Matriz B contiene valores que no son números."
+            });
+            return;
+        }
+
+        // --- VALIDACIÓN b): las dimensiones deben ser iguales para poder sumar ---
+
+        // Obtenemos las dimensiones de cada matriz
+        const filasA = matrizA.length;
+        const columnasA = matrizA[0].length;
+        const filasB = matrizB.length;
+        const columnasB = matrizB[0].length;
+
+        // Comparamos filas
+        if (filasA !== filasB) {
+            res.status(400).json({
+                error: "No se puede sumar: la cantidad de filas es distinta. " +
+                    "Matriz A tiene " + filasA + " filas y Matriz B tiene " + filasB + " filas."
+            });
+            return;
+        }
+
+        // Comparamos columnas
+        if (columnasA !== columnasB) {
+            res.status(400).json({
+                error: "No se puede sumar: la cantidad de columnas es distinta. " +
+                    "Matriz A tiene " + columnasA + " columnas y Matriz B tiene " + columnasB + " columnas."
+            });
+            return;
+        }
+
+        // --- OPERACIÓN: todas las validaciones pasaron, calculamos la suma ---
+        const resultado = sumarMatrices(matrizA, matrizB);
+
+        // Enviamos el resultado al cliente en formato JSON con estado 200 (OK)
+        res.status(200).json({
+            operacion: "suma",
+            resultado: resultado
         });
-        return;
     }
-
-    // --- VALIDACIÓN a): los valores deben ser solo números ---
-    const matrizATieneNumeros = validarQueSeaNumero(matrizA);
-    const matrizBTieneNumeros = validarQueSeaNumero(matrizB);
-
-    if (matrizATieneNumeros === false) {
-        res.status(400).json({
-            error: "La Matriz A contiene valores que no son números."
-        });
-        return;
+    catch (error) {
+        res.status(500).json({ 'msgError': 'Error interno del servidor' });
     }
-
-    if (matrizBTieneNumeros === false) {
-        res.status(400).json({
-            error: "La Matriz B contiene valores que no son números."
-        });
-        return;
-    }
-
-    // --- VALIDACIÓN b): las dimensiones deben ser iguales para poder sumar ---
-
-    // Obtenemos las dimensiones de cada matriz
-    const filasA    = matrizA.length;
-    const columnasA = matrizA[0].length;
-    const filasB    = matrizB.length;
-    const columnasB = matrizB[0].length;
-
-    // Comparamos filas
-    if (filasA !== filasB) {
-        res.status(400).json({
-            error: "No se puede sumar: la cantidad de filas es distinta. " +
-                   "Matriz A tiene " + filasA + " filas y Matriz B tiene " + filasB + " filas."
-        });
-        return;
-    }
-
-    // Comparamos columnas
-    if (columnasA !== columnasB) {
-        res.status(400).json({
-            error: "No se puede sumar: la cantidad de columnas es distinta. " +
-                   "Matriz A tiene " + columnasA + " columnas y Matriz B tiene " + columnasB + " columnas."
-        });
-        return;
-    }
-
-    // --- OPERACIÓN: todas las validaciones pasaron, calculamos la suma ---
-    const resultado = sumarMatrices(matrizA, matrizB);
-
-    // Enviamos el resultado al cliente en formato JSON con estado 200 (OK)
-    res.status(200).json({
-        operacion: "suma",
-        resultado: resultado
-    });
 }
-
-
 // ============================================================
 // CONTROLADOR: controladorProducto
 //
@@ -181,12 +183,12 @@ function controladorProducto(req, res) {
     // --- VALIDACIÓN c): columnas de A deben coincidir con filas de B ---
 
     const columnasA = matrizA[0].length;
-    const filasB    = matrizB.length;
+    const filasB = matrizB.length;
 
     if (columnasA !== filasB) {
         res.status(400).json({
             error: "No se puede multiplicar: la cantidad de columnas de Matriz A (" + columnasA + ") " +
-                   "debe ser igual a la cantidad de filas de Matriz B (" + filasB + ")."
+                "debe ser igual a la cantidad de filas de Matriz B (" + filasB + ")."
         });
         return;
     }
